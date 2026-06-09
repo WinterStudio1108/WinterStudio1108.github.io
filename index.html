@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winter Studio | Saoc - Unity 3D Developer</title>
+    <!-- Meta Descriptions & SEO -->
+    <meta name="description" content="Perfil de Saoc, desarrollador Unity 3D y creador de Winter Studio. Creador del juego de supervivencia zombie Poly Mercenarios. Diseños inspirados en invierno y estética retro gaming de 8-bit / 16-bit.">
+    <meta name="keywords" content="Unity 3D, Unity, Game Developer, Winter Studio, Poly Mercenarios, Saoc, Retro Gaming, Portfolio, Desarrollador de videojuegos">
+    <meta name="author" content="Saoc">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/logo_transparent.png" type="image/png">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- CRT Effect Scanlines & Flicker -->
+    <div id="crt-overlay" class="crt-screen disabled"></div>
+    <div class="vignette"></div>
+
+    <!-- Snow Particle Canvas -->
+    <canvas id="snow-canvas"></canvas>
+
+    <!-- Main Arcade Cabinet / Game Frame -->
+    <div class="arcade-cabinet">
+        <!-- Cabinet Header (Marquee) -->
+        <header class="cabinet-marquee">
+            <div class="marquee-logo-wrap">
+                <img src="assets/logo_transparent.png" alt="Winter Studio Logo" class="marquee-logo">
+            </div>
+            <h1 class="marquee-title text-glow">WINTER STUDIO</h1>
+            <div class="marquee-sub">★ RETRO GAMING EDITION ★</div>
+        </header>
+
+        <!-- Arcade Screen Wrapper -->
+        <main class="arcade-screen">
+            <!-- HUD / Top Stats Bar -->
+            <div class="hud-bar">
+                <div class="hud-item hud-player">
+                    <span class="hud-label">1P</span>
+                    <span class="hud-value text-highlight">SAOC</span>
+                </div>
+                <div class="hud-item hud-hp">
+                    <span class="hud-label">HP</span>
+                    <div class="hud-hp-bar-container">
+                        <div class="hud-hp-bar" id="hp-bar" style="width: 100%;"></div>
+                    </div>
+                    <span class="hud-value" id="hp-text">99/99</span>
+                </div>
+                <div class="hud-item hud-score">
+                    <span class="hud-label">COINS</span>
+                    <span class="hud-value text-yellow" id="coin-counter">000000</span>
+                </div>
+                <div class="hud-item hud-level">
+                    <span class="hud-label">LVL</span>
+                    <span class="hud-value text-cyan">03</span>
+                </div>
+            </div>
+
+            <!-- Main Content Game Screen -->
+            <div class="game-screen-content">
+                <!-- Tutorial Overlay (First Time Visitor) -->
+                <div id="tutorial-overlay" class="tutorial-overlay hidden">
+                    <div class="tutorial-box pixel-box">
+                        <div class="tutorial-logo-wrap">
+                            <img src="assets/logo_transparent.png" alt="Winter Studio Logo" class="tutorial-logo">
+                        </div>
+                        <h3 class="panel-header text-glow text-center" style="border-left: none; padding-left: 0; margin-bottom: 15px;">HOW TO PLAY</h3>
+                        <p class="pixel-text text-sm text-center" style="margin-bottom: 12px;">
+                            ¡Bienvenido a <strong class="text-highlight">Winter Studio</strong>!
+                        </p>
+                        <p class="pixel-text text-sm" style="margin-bottom: 12px; line-height: 1.5;">
+                            Usa las <strong class="text-yellow">FLECHAS de dirección</strong> en tu teclado o el <strong class="text-cyan">GAMEPAD virtual</strong> inferior para navegar entre los niveles de este portafolio.
+                        </p>
+                        <p class="pixel-text text-sm" style="margin-bottom: 18px; line-height: 1.5;">
+                            Puedes presionar <strong class="text-green">SELECT</strong> para alternar el filtro de pantalla CRT y <strong class="text-red">START</strong> para encender/apagar el sonido retro.
+                        </p>
+                        <button id="btn-close-tutorial" class="btn-retro btn-block text-glow" style="font-size: 11px; padding: 14px;">START PORTFOLIO</button>
+                    </div>
+                </div>
+
+                <!-- Privacy Policy Overlay -->
+                <div id="privacy-overlay" class="tutorial-overlay hidden">
+                    <div class="tutorial-box pixel-box" style="max-width: 580px; max-height: 85vh; overflow-y: auto;">
+                        <h3 class="panel-header text-glow text-center" style="border-left: none; padding-left: 0; margin-bottom: 15px;">PRIVACY POLICY</h3>
+                        <div class="pixel-text text-sm" style="line-height: 1.6; text-align: left; max-height: 45vh; overflow-y: auto; padding-right: 8px; border-bottom: 2px dashed var(--border-pixel); margin-bottom: 15px;">
+                            <p style="margin-bottom: 10px; font-weight: bold; color: var(--accent-yellow);">POLÍTICA DE PRIVACIDAD - WINTER STUDIO</p>
+                            <p style="margin-bottom: 10px; font-size: 10px; color: var(--text-muted);">Última actualización: Junio 2026</p>
+                            
+                            <p style="margin-bottom: 12px;">
+                                En <strong>Winter Studio</strong> nos tomamos muy en serio la privacidad de nuestros jugadores. Esta política de privacidad detalla el procesamiento de datos al usar nuestro juego <strong>Poly Mercenarios</strong>.
+                            </p>
+                            
+                            <p style="margin-bottom: 6px; font-weight: bold; color: var(--primary-cyan);">1. RECOPILACIÓN DE DATOS</p>
+                            <p style="margin-bottom: 12px;">
+                                No recopilamos, solicitamos ni almacenamos ningún dato de identificación personal de los usuarios (como nombre, correo, ubicación exacta o números telefónicos).
+                            </p>
+                            
+                            <p style="margin-bottom: 6px; font-weight: bold; color: var(--primary-cyan);">2. SERVICIOS DE PROVEEDORES DE TERCEROS</p>
+                            <p style="margin-bottom: 6px;">
+                                El juego integra SDKs de terceros para funcionalidades de juego en línea y publicidad. Dichos proveedores pueden recopilar identificadores de publicidad únicos y no personales:
+                            </p>
+                            <ul style="margin-bottom: 12px; padding-left: 20px; list-style-type: square; line-height: 1.4;">
+                                <li style="margin-bottom: 6px;"><strong>Google Play Services</strong>: Administra logros, guardados en la nube y tablas de clasificación vinculadas a tu cuenta de Google Play.</li>
+                                <li style="margin-bottom: 6px;"><strong>Unity Ads / Google AdMob</strong>: Se utiliza para mostrar anuncios opcionales o intersticiales que permiten el soporte del juego.</li>
+                            </ul>
+                            
+                            <p style="margin-bottom: 6px; font-weight: bold; color: var(--primary-cyan);">3. CONTACTO</p>
+                            <p style="margin-bottom: 12px;">
+                                Si tienes alguna duda, puedes contactarnos en: <strong class="text-highlight">winterstudio1108@gmail.com</strong>
+                            </p>
+                        </div>
+                        <button id="btn-close-privacy" class="btn-retro btn-block text-glow">CLOSE LOG</button>
+                    </div>
+                </div>
+                
+                <!-- LEVEL 1: Player Profile (About Me) -->
+                <section id="level-1" class="game-level active">
+                    <h2 class="level-title">[LEVEL 01: PLAYER_PROFILE]</h2>
+                    <div class="profile-layout">
+                        <!-- Left Panel: Character Sprite and Class Selector -->
+                        <div class="profile-avatar-card pixel-box">
+                            <div class="sprite-container">
+                                <!-- Custom Retro Pixel Avatar Canvas / SVG -->
+                                <div class="pixel-avatar" id="avatar-sprite">
+                                    <!-- Dynamic pixel art via CSS grid -->
+                                </div>
+                            </div>
+                            <div class="class-selector">
+                                <p class="selector-label">CLASS SELECT:</p>
+                                <div class="selector-buttons">
+                                    <button class="btn-retro btn-sm active" data-class="dev">DEVSMITH</button>
+                                    <button class="btn-retro btn-sm" data-class="opt">OPTMAGE</button>
+                                    <button class="btn-retro btn-sm" data-class="phys">PHYSTECH</button>
+                                </div>
+                            </div>
+                            <div class="class-info">
+                                <span class="hud-label">CLASS:</span>
+                                <span class="hud-value text-cyan" id="class-title">DEVSMITH</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: RPG Stats & Description -->
+                        <div class="profile-details-card pixel-box">
+                            <h3 class="panel-header">DEVELOPER STATS</h3>
+                            <div class="rpg-stats">
+                                <div class="stat-row">
+                                    <span class="stat-name">C# / UNITY 3D</span>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar bg-cyan" style="width: 95%;"></div>
+                                    </div>
+                                    <span class="stat-val">95%</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">OPTIMIZATION</span>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar bg-green" style="width: 85%;"></div>
+                                    </div>
+                                    <span class="stat-val">85%</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">GAME DESIGN</span>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar bg-yellow" style="width: 90%;"></div>
+                                    </div>
+                                    <span class="stat-val">90%</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">ZOMBIE SURVIVAL</span>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar bg-red" style="width: 99%;"></div>
+                                    </div>
+                                    <span class="stat-val">99%</span>
+                                </div>
+                            </div>
+
+                            <h3 class="panel-header text-cyan">QUEST OVERVIEW</h3>
+                            <p class="pixel-text text-sm">
+                                Hola, soy <strong class="text-highlight">Saoc</strong>, un programador apasionado de videojuegos en Unity 3D y fundador de <strong class="text-glow-blue">Winter Studio</strong>. Me enfoco en desarrollar mecánicas dinámicas, optimización de recursos, físicas precisas y sistemas interactivos que entreguen una jugabilidad adictiva.
+                            </p>
+                            <p class="pixel-text text-sm">
+                                Explora este portafolio virtual navegando por los niveles usando la consola interactiva inferior o las pestañas de navegación. ¡Disfruta el invierno digital!
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEVEL 2: Poly Mercenarios (Featured Game) -->
+                <section id="level-2" class="game-level">
+                    <h2 class="level-title">[LEVEL 02: POLY_MERCENARIOS]</h2>
+                    <div class="game-showcase-layout">
+                        <!-- Main Card -->
+                        <div class="showcase-main pixel-box">
+                            <div class="game-badge">HOT PLAY STORE RELEASE</div>
+                            <div class="game-banner-container">
+                                <img src="assets/horde_cover.png" alt="Poly Mercenarios Cover Art - Survive the Horde" class="game-banner" id="current-carousel-img">
+                            </div>
+                            
+                            <!-- Play Store Badge Button -->
+                            <div class="store-links-container">
+                                <a href="https://play.google.com/store/apps/details?id=com.WinterStudio.PolyMercenarios" target="_blank" rel="noopener noreferrer" class="btn-store btn-retro text-glow">
+                                    <svg class="play-store-icon" viewBox="0 0 24 24" width="20" height="20">
+                                        <path fill="currentColor" d="M3 5.27c0-.98.79-1.39 1.54-.92l14.9 9.1c.67.41.67 1.07 0 1.48l-14.9 9.1c-.75.46-1.54.06-1.54-.92V5.27zM5 7.15v9.7L13 12 5 7.15z"/>
+                                    </svg>
+                                    JUGAR EN GOOGLE PLAY
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Game Details & Screenshots -->
+                        <div class="showcase-details pixel-box">
+                            <h3 class="panel-header text-glow-red">SURVIVAL ACTION SHOOTER</h3>
+                            <p class="pixel-text text-sm">
+                                <strong>Poly Mercenarios</strong> es un shooter de supervivencia zombie en 3D desarrollado en Unity con un estilizado arte Low-Poly. Enfrenta oleadas infinitas de no-muertos, administra tus recursos y demuestra tus habilidades tácticas.
+                            </p>
+                            
+                            <!-- Features bullets -->
+                            <div class="bullet-features text-sm">
+                                <div class="feature-tag"><span class="text-red">☢</span> Daño Localizado y Desmembramiento Físico.</div>
+                                <div class="feature-tag"><span class="text-cyan">⚙</span> Inventario táctico inteligente (estilo Tetris).</div>
+                                <div class="feature-tag"><span class="text-yellow">⚡</span> Multiplicador de puntos por combos continuos.</div>
+                                <div class="feature-tag"><span class="text-green">❄</span> Creado de manera independiente en Unity 3D.</div>
+                            </div>
+
+                            <h3 class="panel-header text-cyan">GALLERY SCREENSHOTS</h3>
+                            <div class="screenshot-carousel">
+                                <div class="carousel-thumbs">
+                                    <button class="carousel-thumb active" data-img="assets/horde_cover.png" title="Survive the Horde">
+                                        <img src="assets/horde_cover.png" alt="Survive the Horde Preview">
+                                    </button>
+                                    <button class="carousel-thumb" data-img="assets/promo_banner.jpg" title="Promo Banner">
+                                        <img src="assets/promo_banner.jpg" alt="Promo Banner Preview">
+                                    </button>
+                                    <button class="carousel-thumb" data-img="assets/inventory.jpg" title="Inventario Táctico">
+                                        <img src="assets/inventory.jpg" alt="Inventario Preview">
+                                    </button>
+                                    <button class="carousel-thumb" data-img="assets/dismemberment.jpg" title="Desmembramiento">
+                                        <img src="assets/dismemberment.jpg" alt="Dismemberment Preview">
+                                    </button>
+                                    <button class="carousel-thumb" data-img="assets/combos.jpg" title="Combos Masivos">
+                                        <img src="assets/combos.jpg" alt="Combos Preview">
+                                    </button>
+                                </div>
+                                <p class="carousel-caption text-sm text-center" id="carousel-caption">Portada: Supervive a la Horda Zombie</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEVEL 3: Portfolio (Other Missions) -->
+                <section id="level-3" class="game-level">
+                    <h2 class="level-title">[LEVEL 03: QUEST_LOG]</h2>
+                    <p class="pixel-text text-center text-cyan" style="margin-bottom: 20px;">SELECCIONA UN CARTUCHO DE JUEGO PARA CARGAR PROYECTO</p>
+                    
+                    <div class="cartridge-layout">
+                        <!-- Left Column: Cartridges List -->
+                        <div class="cartridge-list">
+                            <!-- Cartridge 1 -->
+                            <div class="cartridge-item active" data-project="poly">
+                                <div class="cartridge-label">
+                                    <span class="cart-label-text">POLY MERCENARIOS</span>
+                                    <span class="cart-label-sub">ACTIVE CASSETTE</span>
+                                </div>
+                                <div class="cartridge-grip"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Cartridge Detail Viewer -->
+                        <div class="cartridge-viewer pixel-box" id="project-details-panel">
+                            <h3 class="panel-header text-yellow" id="project-title">POLY MERCENARIOS</h3>
+                            <div class="project-tags">
+                                <span class="badge badge-cyan">Unity 3D</span>
+                                <span class="badge badge-green">C#</span>
+                                <span class="badge badge-red">Android</span>
+                            </div>
+                            
+                            <p class="pixel-text text-sm" id="project-desc">
+                                El juego estrella de Winter Studio. Un shooter móvil en donde debes lidiar con física de impacto localizada y administrar una mochila de inventario con espacio limitado. Todo a través de un motor de físicas personalizado y optimización de renderizado móvil para hordas zombies.
+                            </p>
+                            
+                            <div class="project-stat-box text-sm">
+                                <div><strong>PLATAFORMA:</strong> <span class="text-cyan" id="project-platform">Google Play Store / Android</span></div>
+                                <div><strong>ESTADO:</strong> <span class="text-green" id="project-status">Publicado</span></div>
+                                <div><strong>AÑO:</strong> <span id="project-year">2026</span></div>
+                            </div>
+                            
+                            <div class="project-links" id="project-links-area">
+                                <a href="https://play.google.com/store/apps/details?id=com.WinterStudio.PolyMercenarios" target="_blank" rel="noopener noreferrer" class="btn-retro btn-sm text-glow">VER EN TIENDA</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEVEL 4: Contact & Socials -->
+                <section id="level-4" class="game-level">
+                    <h2 class="level-title">[LEVEL 04: CO-OP_MODE]</h2>
+                    <div class="contact-layout">
+                        <!-- Dialogue / Info box -->
+                        <div class="contact-dialog pixel-box">
+                            <div class="dialog-speaker">
+                                <div class="speaker-avatar"></div>
+                                <span class="speaker-name text-highlight">WINTER_BOT</span>
+                            </div>
+                            <div class="dialog-bubble">
+                                <p class="pixel-text text-sm" id="dialog-text">
+                                    ¡Hola, viajero de internet! ¿Quieres iniciar una partida en cooperativo o contratar a Saoc para tu próximo proyecto Unity 3D? ¡Déjame un mensaje o conéctate mediante los links de abajo!
+                                </p>
+                            </div>
+                            
+                            <div class="social-grid">
+                                <a href="https://linkedin.com/in/saoc" target="_blank" rel="noopener noreferrer" class="social-card pixel-box">
+                                    <div class="social-icon icon-linkedin"></div>
+                                    <span class="social-title">LINKEDIN</span>
+                                    <span class="social-handle">/in/saoc</span>
+                                </a>
+                                <a href="https://play.google.com/store/apps/dev?id=7354888830956380953" target="_blank" rel="noopener noreferrer" class="social-card pixel-box">
+                                    <div class="social-icon icon-googleplay"></div>
+                                    <span class="social-title">PLAY STORE</span>
+                                    <span class="social-handle">Winter Studio</span>
+                                </a>
+                                <a href="https://github.com/Saoc1108/" target="_blank" rel="noopener noreferrer" class="social-card pixel-box">
+                                    <div class="social-icon icon-github"></div>
+                                    <span class="social-title">GITHUB</span>
+                                    <span class="social-handle">/Saoc1108</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Dialogue Form -->
+                        <div class="contact-form-panel pixel-box">
+                            <h3 class="panel-header text-glow-blue">SEND A MESSAGE</h3>
+                            <form id="quest-form" class="pixel-form">
+                                <div class="form-group">
+                                    <label for="form-name" class="form-label">PLAYER NAME:</label>
+                                    <input type="text" id="form-name" class="pixel-input" placeholder="INGRESA TU NOMBRE" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-email" class="form-label">EMAIL ADDR:</label>
+                                    <input type="email" id="form-email" class="pixel-input" placeholder="TU@EMAIL.COM" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-message" class="form-label">MESSAGE LOG:</label>
+                                    <textarea id="form-message" class="pixel-input pixel-textarea" rows="4" placeholder="ESCRIBE TU MENSAJE AQUÍ..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn-retro btn-block text-glow">INSERT COIN & ENVIAR</button>
+                            </form>
+                            <div id="form-success-msg" class="pixel-text text-sm text-green text-center hidden">
+                                ★ MENSAJE TRANSMITIDO CON ÉXITO ★
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Quick Notification Overlay for dynamic HUD triggers -->
+            <div id="game-toast" class="toast-popup hidden">
+                <span id="toast-message">LEVEL CLEARED!</span>
+            </div>
+
+            <!-- Arcade Screen Border Shadow -->
+            <div class="screen-border-effect"></div>
+        </main>
+
+        <!-- Arcade Console Gamepad Panel -->
+        <footer class="console-panel">
+            <div class="controller-left">
+                <!-- D-Pad (Navigation) -->
+                <div class="dpad">
+                    <div class="dpad-btn dpad-up" id="btn-dpad-up" title="Next Tab"></div>
+                    <div class="dpad-btn dpad-down" id="btn-dpad-down" title="Previous Tab"></div>
+                    <div class="dpad-btn dpad-left" id="btn-dpad-left" title="Previous Tab"></div>
+                    <div class="dpad-btn dpad-right" id="btn-dpad-right" title="Next Tab"></div>
+                    <div class="dpad-center"></div>
+                </div>
+            </div>
+
+            <div class="controller-center">
+                <!-- Select & Start Buttons -->
+                <div class="menu-buttons">
+                    <div class="menu-btn-container">
+                        <button class="menu-btn" id="btn-select" title="Toggle CRT Screen Scanlines"></button>
+                        <span class="menu-btn-label">SELECT (CRT)</span>
+                    </div>
+                    <div class="menu-btn-container">
+                        <button class="menu-btn" id="btn-start" title="Mute/Unmute Audio Synth"></button>
+                        <span class="menu-btn-label">START (SOUND)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controller-right">
+                <!-- Action A/B Buttons -->
+                <div class="action-buttons">
+                    <div class="action-btn-container">
+                        <button class="action-btn btn-b" id="btn-action-b" title="Action B - Sound Blaster"></button>
+                        <span class="action-label">B</span>
+                    </div>
+                    <div class="action-btn-container">
+                        <button class="action-btn btn-a" id="btn-action-a" title="Action A - Coin Reward"></button>
+                        <span class="action-label">A</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Coin Slot and Key Details -->
+        <div class="cabinet-lower-trim">
+            <div class="coin-slots">
+                <div class="coin-entry" id="coin-slot-trigger">
+                    <div class="coin-insert-text">INSERT COIN TO PLAY</div>
+                    <div class="coin-hole"></div>
+                    <div class="coin-value">25¢</div>
+                </div>
+            </div>
+            <div class="brand-sub" style="margin-bottom: 8px;">WINTER STUDIO © 2026</div>
+            <a href="#privacy" class="pixel-text" style="font-size: 8px; color: var(--text-muted); text-decoration: none; letter-spacing: 1.5px; transition: color 0.15s ease;">POLÍTICA DE PRIVACIDAD</a>
+        </div>
+    </div>
+
+    <!-- Background Decoration: Big Winter Retro Pixel Art mountains or snowflakes on sides -->
+    <div class="bg-decoration side-left"></div>
+    <div class="bg-decoration side-right"></div>
+
+    <!-- Main JavaScript Code -->
+    <script src="js/main.js"></script>
+</body>
+</html>
